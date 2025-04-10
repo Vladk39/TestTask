@@ -57,6 +57,16 @@ func (s *UserService) AddUserService(req UserRequest) error {
 	return nil
 }
 
+func (s *UserService) SearchUserService(req UserRequest) (bool, error) {
+	exist, err := s.repo.SearchUser(req.Name, req.Surname)
+	if err != nil {
+		s.logger.Error("Ошибка поиска пользователя", zap.Error(err))
+		return false, errors.Wrap(err, "ошибка поиска пользователя")
+	}
+
+	return exist, nil
+}
+
 func (s *UserService) GetUserByFilterService(gender, national string, limit, offset int) ([]usersrepository.DBUser, error) {
 
 	return s.repo.GetUserByFilter(gender, national, limit, offset)

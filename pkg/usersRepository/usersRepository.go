@@ -19,6 +19,8 @@ where id = $6`
 
 const DeleteUser = `DELETE FROM users WHERE id = $1`
 
+const SearchUser = `select count(*) from users where name =$1 and surname=$2`
+
 const GetWithFilterPaginated = `SELECT * FROM users WHERE gender = $1 AND national = $2 ORDER BY id LIMIT $3 OFFSET $4`
 
 const AddUser = `insert into users (name, surname, national, gender, age) values ($1, $2, $3, $4, $5)`
@@ -119,4 +121,14 @@ func (repo *Repository) AddUser(name, surname, national, gender string, age int)
 		return errors.Wrap(err, "ошибка добавления пользователя")
 	}
 	return nil
+}
+
+func (repo *Repository) SearchUser(name, surname string) (bool, error) {
+	var count int
+	err := repo.DB.Get(&count, SearchUser, name, surname)
+	if err != nil {
+		return false, err
+	}
+
+	return count > 0, nil
 }

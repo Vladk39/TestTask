@@ -40,7 +40,18 @@ func (h *Handler) AddUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := h.UserService.AddUserService(req)
+	exists, err := h.UserService.SearchUserService(req)
+	if err != nil {
+		http.Error(w, "Ошибка поиска пользователя: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if exists {
+		http.Error(w, "Пользователь уже существует", http.StatusConflict) // Статус 409 - конфликт
+		return
+	}
+
+	err = h.UserService.AddUserService(req)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
