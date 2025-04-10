@@ -2,6 +2,7 @@ package main
 
 import (
 	"TestTask/pkg/api"
+	_ "TestTask/pkg/api/docs"
 	"TestTask/pkg/config"
 	userclient "TestTask/pkg/userClient"
 	userservice "TestTask/pkg/userService"
@@ -34,9 +35,9 @@ func main() {
 	}
 	logger.Info("Репозиторий создан")
 
-	userClient := userclient.NewUserClient(config)
+	userClient := userclient.NewUserClient(config, logger)
 
-	userService := userservice.NewUserService(repo, userClient, config)
+	userService := userservice.NewUserService(repo, userClient, config, logger)
 
 	handler := api.NewHandler(userService)
 

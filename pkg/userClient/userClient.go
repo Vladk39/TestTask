@@ -8,20 +8,23 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
+	"go.uber.org/zap"
 )
 
 type UserClient struct {
 	Client *http.Client
 	c      *config.Config
+	logger *zap.Logger
 	// BaseURL string
 }
 
-func NewUserClient(c *config.Config) *UserClient {
+func NewUserClient(c *config.Config, logger *zap.Logger) *UserClient {
 	return &UserClient{
 		Client: &http.Client{
 			Timeout: 25 * time.Second,
 		},
-		c: c,
+		c:      c,
+		logger: logger,
 	}
 }
 

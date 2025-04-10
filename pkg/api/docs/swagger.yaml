@@ -1,0 +1,191 @@
+definitions:
+  userservice.UserRequest:
+    properties:
+      name:
+        type: string
+      surname:
+        type: string
+    type: object
+  usersrepository.DBUser:
+    properties:
+      age:
+        type: integer
+      gender:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      national:
+        type: string
+      surname:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /add-user:
+    post:
+      consumes:
+      - application/json
+      description: Добавляет пользователя с именем, фамилией, и автоматически подтягивает
+        пол, возраст, нацию
+      parameters:
+      - description: Данные пользователя
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/userservice.UserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Пользователь добавлен
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Добавить пользователя
+      tags:
+      - users
+  /delete-user/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Эндпоинт для удаления пользователя по его ID
+      parameters:
+      - description: ID пользователя для удаления
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешное удаление пользователя
+          schema:
+            type: string
+        "400":
+          description: Неверный запрос
+          schema:
+            type: string
+        "404":
+          description: Пользователь не найден
+          schema:
+            type: string
+        "500":
+          description: Ошибка сервера
+          schema:
+            type: string
+      summary: Удалить пользователя
+      tags:
+      - users
+  /get-all-users:
+    get:
+      consumes:
+      - application/json
+      description: Эндпоинт для получения списка всех пользователей
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список пользователей
+          schema:
+            items:
+              $ref: '#/definitions/usersrepository.DBUser'
+            type: array
+        "500":
+          description: Ошибка сервера
+          schema:
+            type: string
+      summary: Получить всех пользователей
+      tags:
+      - users
+  /get-users:
+    get:
+      consumes:
+      - application/json
+      description: Возвращает пользователей по полу, национальности и с пагинацией
+      parameters:
+      - description: 'Пол пользователя (например: male, female)'
+        in: query
+        name: gender
+        required: true
+        type: string
+      - description: 'Национальность (например: US, RU)'
+        in: query
+        name: national
+        required: true
+        type: string
+      - description: Максимальное количество пользователей (по умолчанию 10)
+        in: query
+        name: limit
+        type: integer
+      - description: Смещение для пагинации (по умолчанию 0)
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/usersrepository.DBUser'
+            type: array
+        "400":
+          description: Неверный запрос
+          schema:
+            type: string
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            type: string
+      summary: Получить пользователей по фильтру
+      tags:
+      - users
+  /update-user/:
+    post:
+      consumes:
+      - application/json
+      description: Эндпоинт для обновления данных пользователя по его ID
+      parameters:
+      - description: ID пользователя, данные которого нужно обновить
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Данные пользователя для обновления
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/userservice.UserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Информация о пользователе обновлена
+          schema:
+            type: string
+        "400":
+          description: Неверный запрос
+          schema:
+            type: string
+        "404":
+          description: Пользователь не найден
+          schema:
+            type: string
+        "500":
+          description: Ошибка сервера
+          schema:
+            type: string
+      summary: Обновить информацию о пользователе
+      tags:
+      - users
+swagger: "2.0"
